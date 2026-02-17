@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>mObywatel 2.0</title>
+    <style>
+        :root { --mBlue: #003399; --mBg: #F5F6F8; }
+        body { font-family: 'Roboto', sans-serif; background: var(--mBg); margin: 0; padding: 0; overflow-x: hidden; user-select: none; }
+        .top-bar { background: white; padding: 16px; text-align: center; font-weight: 700; font-size: 18px; border-bottom: 1px solid #e0e0e0; color: #333; position: sticky; top: 0; z-index: 10; }
+        .card { background: white; margin: 12px; border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; overflow: hidden; }
+        .flag { position: absolute; top: 20px; right: 20px; width: 40px; height: 25px; border: 0.5px solid #ccc; background: linear-gradient(to bottom, #fff 50%, #dc143c 50%); }
+        .photo-wrap { width: 115px; height: 155px; border: 3px solid var(--mBlue); border-radius: 12px; overflow: hidden; filter: grayscale(100%); background: #eee; }
+        .photo-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        .data-sec { flex: 1; margin-left: 15px; }
+        .label { font-size: 10px; color: #757575; text-transform: uppercase; font-weight: 800; margin-top: 8px; }
+        .val { font-size: 16px; color: #000; font-weight: 700; line-height: 1.2; }
+        .status-btn { background: #E8F0FE; color: var(--mBlue); text-align: center; padding: 14px; border-radius: 12px; font-weight: 800; margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14px; }
+        .timer { text-align: center; margin-top: 15px; font-size: 13px; color: var(--mBlue); font-weight: 700; border-top: 1px solid #f0f0f0; padding-top: 10px; }
+        .hologram { position: absolute; bottom: 15px; right: 15px; width: 35px; height: 35px; background: radial-gradient(circle, #ffd700, #fff, #ffd700); border-radius: 50%; opacity: 0.6; animation: rotateHolo 3s linear infinite; }
+        @keyframes rotateHolo { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        #cfg { position: fixed; inset: 0; background: white; z-index: 100; padding: 30px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1.5px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
+        .btn-gen { width: 100%; padding: 16px; background: var(--mBlue); color: white; border: none; border-radius: 12px; font-weight: bold; font-size: 16px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div id="cfg">
+        <h2 style="color:var(--mBlue)">mObywatel 2.0 Setup</h2>
+        <input type="text" id="in-name" placeholder="NAZWISKO I IMIĘ">
+        <input type="text" id="in-pesel" placeholder="PESEL">
+        <input type="text" id="in-date" placeholder="DATA URODZENIA">
+        <p style="font-size:12px; color:#666">Wybierz zdjęcie (będzie szare):</p>
+        <input type="file" id="in-img" accept="image/*">
+        <button class="btn-gen" onclick="build()">GENERUJ DOKUMENT</button>
+    </div>
+
+    <div class="top-bar">mObywatel</div>
+    <div class="card">
+        <div class="flag"></div>
+        <div style="display:flex;">
+            <div class="photo-wrap"><img id="res-img" src=""></div>
+            <div class="data-sec">
+                <div class="label">Nazwisko i imiona</div>
+                <div class="val" id="res-name">JAN KOWALSKI</div>
+                <div class="label">Obywatelstwo</div>
+                <div class="val">POLSKIE</div>
+                <div class="label">Pesel</div>
+                <div id="res-pesel" class="val">00000000000</div>
+            </div>
+        </div>
+        <div class="status-btn"><span>✔</span> Potwierdź swoje dane</div>
+        <div class="timer" id="clock">--:--:-- --.--.----</div>
+        <div class="hologram"></div>
+    </div>
+
+    <script>
+        function build() {
+            document.getElementById('res-name').innerText = document.getElementById('in-name').value.toUpperCase();
+            document.getElementById('res-pesel').innerText = document.getElementById('in-pesel').value;
+            const file = document.getElementById('in-img').files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('res-img').src = e.target.result;
+                document.getElementById('cfg').style.display = 'none';
+            };
+            if(file) reader.readAsDataURL(file);
+        }
+        setInterval(() => {
+            const n = new Date();
+            const time = n.toLocaleTimeString('pl-PL');
+            const date = n.toLocaleDateString('pl-PL');
+            document.getElementById('clock').innerText = `Czas: ${time} ${date}`;
+        }, 1000);
+    </script>
+</body>
+</html>
